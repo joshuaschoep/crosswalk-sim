@@ -1,0 +1,36 @@
+#!/usr/bin/env python3
+
+import sys
+import main
+import random
+
+def uniform_generator():
+	yield random.uniform(0,1)
+
+if __name__ == '__main__' :
+	try:
+		N = int(sys.argv[1])
+		if N <= 0:
+			raise ValueError("Value for N is below minimum (1)")
+		# auto = open(sys.argv[2])
+		# ped = open(sys.argv[3])
+		# presses = open(sys.argv[4])
+
+		auto = uniform_generator()
+		ped = uniform_generator()
+		presses = uniform_generator()
+
+	except IndexError as e:
+		print("Bad number of arguments passed to sim: 4 required and", len(sys.argv) - 1, "provided")
+		exit(1)
+	except ValueError as e:
+		print("Bad value passed to sim:", e)
+		exit(2)
+	except FileNotFoundError as e:
+		print("File not found for open:", e)
+		exit(3)
+	except Error as e:
+		print("Unhandled exception:", e)
+		exit(4)
+	main.start( N, auto, ped, presses )	
+
