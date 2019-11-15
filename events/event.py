@@ -12,7 +12,20 @@ class EventType(Enum):
     PED_EXIT = 8
 
 class Event:
-    def __init__(type: EventType, at: float, metadata: dict):
-        this.type = type
-        this.at = at
-        this.metadata = metadata
+    def __init__(self, type: EventType, at: float, metadata: dict):
+        self.type = type
+        self.at = at
+        self.metadata = metadata
+    
+    def __lt__(self, other):
+        if not isinstance(other, Event):
+            raise TypeError("Error: comparison of Event type with", type(other))
+        return self.at < other.at
+    
+    def __repr__(self):
+        base = str(self.type) + " event at: " + str(self.at)
+        if len(self.metadata) != 0:
+            base += "\nData:"
+            for key, value in self.metadata.items():
+                base += "\n\t" + str(key) + ": " + str(value)
+        return base

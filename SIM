@@ -3,9 +3,7 @@
 import sys
 import main
 import random
-
-def uniform_generator():
-	yield random.uniform(0,1)
+from variates import uniform_generator
 
 if __name__ == '__main__' :
 	try:
