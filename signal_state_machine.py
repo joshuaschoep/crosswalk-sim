@@ -13,33 +13,35 @@ class SignalState(Enum):
     RED = 4
 
 class TrafficSignal:
-    def __init__(self):
-        self.currentState = SignalState.GREEN_UNPRESSED
-        self.greenTimer = GREEN_TIMER_LENGTH
-        self.event_queue = global event_queue
+    def __init__(self, event_queue):
+        self.event_queue = event_queue
+        self.current_state = SignalState.GREEN_UNPRESSED
+        self.red_expire = 0
+        self.event_queue.push(Event(EventType.GREEN_EXPIRES, GREEN_TIMER_LENGTH, {}))
     
     def handle_event(self, event: Event):
         if event.type == EventType.GREEN_EXPIRES:
             if self.current_state == SignalState.GREEN_PRESSED:
                 at = event.at + YELLOW_TIMER_LENGTH
-                event_queue.push(Event(EventType.YELLOW_EXPIRES, at, {}))
+                self.event_queue.push(Event(EventType.YELLOW_EXPIRES, at, {}))
                 self.current_state = SignalState.YELLOW
             elif self.current_state == SignalState.GREEN_UNPRESSED:
                 self.current_state = SignalState.GREEN_TIMED_OUT                     
         elif event.type == EventType.YELLOW_EXPIRES:
             at = event.at + RED_TIMER_LENGTH
-            event_queue.push(Event(EventType.RED_EXPIRES, at, {}))
+            self.event_queue.push(Event(EventType.RED_EXPIRES, at, {}))
             self.current_state = SignalState.RED
+            self.red_expire = event.at + RED_TIMER_LENGTH
         elif event.type == EventType.RED_EXPIRES:
             at = event.at + GREEN_TIMER_LENGTH
-            event_queue.push(Event(EventType.GREEN_EXPIRES, at, {}))
+            self.event_queue.push(Event(EventType.GREEN_EXPIRES, at, {}))
             self.current_state = SignalState.GREEN_UNPRESSED
 
     
     def press_button(self, time: float):
         if self.current_state == SignalState.GREEN_UNPRESSED:
             self.current_state = SignalState.GREEN_PRESSED
-        elif self.current_state SignalState.GREEN_TIMED_OUT:
+        elif self.current_state == SignalState.GREEN_TIMED_OUT:
             at = time + YELLOW_TIMER_LENGTH
-            event_queue.push(Event(EventType.YELLOW_EXPIRES, at, {}))
+            self.event_queue.push(Event(EventType.YELLOW_EXPIRES, at, {}))
             self.current_state = SignalState.YELLOW

@@ -22,10 +22,16 @@ class Event:
             raise TypeError("Error: comparison of Event type with", type(other))
         return self.at < other.at
     
-    def __repr__(self):
-        base = str(self.type) + " event at: " + str(self.at)
+    def __str__(self):
+        base = '\n' + str(self.type) + " event at: " + str(self.at)
         if len(self.metadata) != 0:
             base += "\nData:"
             for key, value in self.metadata.items():
                 base += "\n\t" + str(key) + ": " + str(value)
         return base
+    
+    def __repr__(self):
+        string = str(self.type) + " at time " + str(self.at)
+        if "Index" in self.metadata:
+            string += " with index " + str(self.metadata["Index"])
+        return string
